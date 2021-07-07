@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { Action, createExpressServer, useContainer } from "routing-controllers";
 import { getCustomRepository } from "typeorm";
 import { AuthController } from "./controllers/AuthController";
-import { loadEnv } from "./global";
+import { isProduction, loadEnv } from "./global";
 import { CompressionMiddleware } from "./middlewares/CompressionMiddleware";
 import { DatabaseMiddleware } from "./middlewares/DatabaseMiddleware";
 import { SecurityHstsMiddleware } from "./middlewares/SecurityHstsMiddleware";
@@ -15,7 +15,7 @@ export function createApp() {
   loadEnv();
 
   return createExpressServer({
-    development: false,
+    development: !isProduction(),
     validation: false,
     cors: {
       origin: true,

@@ -78,11 +78,13 @@ export class CreateUsers1605124277469 implements MigrationInterface {
     }));
 
     const admin = await this.createUser({
+      name: "Administrator",
       username: "admin",
       password: "admin",
     });
 
     const api = await this.createUser({
+      name: "API",
       username: "api",
       apiKey: process.env.APP_KEY,
     });
@@ -97,9 +99,10 @@ export class CreateUsers1605124277469 implements MigrationInterface {
 
   private async createUser(user: any): Promise<User> {
     const result  = new User();
+    result.name = user.name;
+    result.username = user.username;
     result.password = user.password ? await generateHash(user.password) : null;
     result.apiKey = user.apiKey;
-    result.username = user.username;
     result.createdAt = new Date();
     result.confirmedAt = new Date();
     return result;

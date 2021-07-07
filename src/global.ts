@@ -53,7 +53,7 @@ export function createEmail(): Email {
   return new Email({
     send: isProduction(),
     message: {
-      from: "naoresponda@slto.com.br",
+      from: process.env.EMAIL_FROM,
     },
     transport: createTransport({
       host: process.env.EMAIL_HOST,

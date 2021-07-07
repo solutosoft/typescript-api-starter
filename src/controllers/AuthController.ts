@@ -68,6 +68,7 @@ export class AuthController {
     }
 
     user = new User();
+    user.name = data.name;
     user.username = data.username;
     user.password = await generateHash(data.password);
     user.apiKey = randomString();
@@ -199,7 +200,7 @@ export class AuthController {
       locals: {
         name: name,
         link: buildUrl(process.env.APP_URL, {
-          path: "/confirmSignup",
+          path: "/confirm-signup",
           queryParams: {
             username: user.username,
             token: user.confirmationToken,

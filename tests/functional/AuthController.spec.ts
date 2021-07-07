@@ -74,7 +74,7 @@ describe("Authentication", () => {
   });
 
   test("should respond with 204 when signup is successful", async () => {
-    const respose = await supertest.post("/auth/signup")
+    await supertest.post("/auth/signup")
       .set({"x-api-key": process.env.APP_KEY})
       .send({
         name: "John Smith",
@@ -84,7 +84,7 @@ describe("Authentication", () => {
       .expect(StatusCodes.NO_CONTENT);
   });
 
-  test("should respond with 404 when account does not exists", async () => {
+  test("should respond with 404 when user does not exists", async () => {
     await supertest.post("/auth/recovery")
       .set({"x-api-key": process.env.APP_KEY})
       .query({username: "notfound@test.com"})
