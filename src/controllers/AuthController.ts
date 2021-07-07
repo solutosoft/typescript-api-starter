@@ -74,7 +74,7 @@ export class AuthController {
     user.apiKey = randomString();
     this.userRepository.save(user);
 
-    await this.sendConfirmationMail(user, data.name);
+    await this.sendConfirmation(user);
     return null;
   }
 
@@ -117,7 +117,7 @@ export class AuthController {
       throw new NotAcceptableError("UserAlreadyConfirmed");
     }
 
-    await this.sendConfirmationMail(user, user.name);
+    await this.sendConfirmation(user);
     return null;
   }
 
@@ -186,19 +186,17 @@ export class AuthController {
     return user;
   }
 
-  private async sendConfirmationMail(user: User, name: String) {
-    const repository = getCustomRepository(UserRepository);
-
+  private async sendConfirmation(user: User) {
     user.confirmationToken = randomInt(6);
     user.confirmationSentAt = new Date();
-    await repository.save(user);
+    await this.userRepository.save(user);
 
     const email = createEmail();
     email.send({
       message: {to: user.username},
       template: "account-confirmation",
       locals: {
-        name: name,
+        name: user.name,
         link: buildUrl(process.env.APP_URL, {
           path: "/confirm-signup",
           queryParams: {
