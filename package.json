@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "eslint \"src/**/*\" \"tests/**/*\"",
     "build": "webpack --mode=production",
-    "serve": "tsc && ts-node src/index.ts",
+    "serve": "ts-node src/index.ts",
     "cli": "ts-node src/cli.ts",
     "test": "cross-env NODE_ENV=testing jest --collect-coverage --forceExit --runInBand --verbose"
   },
@@ -38,7 +38,6 @@
     "rand-token": "^1.0.1",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.9.0",
-    "typedi": "^0.10.0",
     "typeorm": "^0.2.30",
     "typeorm-naming-strategies": "^2.0.0",
     "typeorm-seeding": "^1.6.1"
