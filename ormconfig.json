@@ -1,0 +1,19 @@
+{
+  "name": "default",
+  "type": "mysql",
+  "host": "localhost",
+  "database": "restapi",
+  "username": "root",
+  "password": "root",
+  "entities": [
+    "src/models/**/*.ts"
+  ],
+  "migrations": [
+    "src/migrations/*.ts"
+  ],
+  "cli": {
+    "entitiesDir": "src/entities",
+    "migrationsDir": "src/migrations",
+    "subscribersDir": "src/subscribers"
+  }
+}
