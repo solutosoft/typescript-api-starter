@@ -6,7 +6,7 @@
 !jest.config.js
 !vetur.config.js
 !vue.config.js
-!webpack.config.js
+!gulpfile.js
 
 coverage
 dist

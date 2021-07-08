@@ -17,7 +17,7 @@ module.exports = {
   },
   ignorePatterns: [
     ".eslintrc.js",
-    "webpack.config.js",
+    "gulpfile.js",
     "bin",
     "emails"
   ],
