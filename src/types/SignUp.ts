@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from "class-validator";
-import { Credentials } from "../interface";
+import { Credentials } from "./Credentials";
 
 export class SignUp extends Credentials {
   @IsString()

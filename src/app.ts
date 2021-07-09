@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-unassigned-import
 import "reflect-metadata";
-import { Action, createExpressServer, UnauthorizedError, useContainer } from "routing-controllers";
+import { Action, createExpressServer } from "routing-controllers";
 import { getCustomRepository } from "typeorm";
 import { AuthController } from "./controllers/AuthController";
 import { isProduction, loadEnv } from "./utils/global";

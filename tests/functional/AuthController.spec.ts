@@ -1,22 +1,26 @@
 import { StatusCodes } from "http-status-codes";
-import { getCustomRepository } from "typeorm";
+import { getCustomRepository, getRepository, Repository } from "typeorm";
 import { runSeeder, tearDownDatabase } from "typeorm-seeding";
 import { createSupertest, setupDatabase } from "../helpers";
 import { UserRepository } from "../../src/repositories/UserRepository";
 import jwtDecode, { JwtPayload } from "jwt-decode";
 import CreateUsers from "../seeds/CreateUsers";
+import { Token } from "../../src/entities/Token";
+import { DateTime } from "luxon";
 
 
 describe("Authentication", () => {
 
   const supertest = createSupertest();
   let userRepository: UserRepository;
+  let tokenRepository: Repository<Token>;
 
   beforeEach(async () => {
     await setupDatabase();
     await runSeeder(CreateUsers);
 
     userRepository = getCustomRepository(UserRepository);
+    tokenRepository = getRepository(Token);
   });
 
   afterAll(async () => {
@@ -259,12 +263,61 @@ describe("Authentication", () => {
       })
       .expect(StatusCodes.OK);
 
-    const result = jwtDecode<JwtPayload>(response.body);
+    const body = response.body;
+    const decoded = jwtDecode<JwtPayload>(body.accessToken);
 
-    expect(result).toEqual(expect.objectContaining({
+    expect(body.refreshToken).toBeTruthy();
+    expect(decoded).toEqual(expect.objectContaining({
       name: "User",
       username: "user@test.com",
     }));
+  });
+
+  test("should respond with 200 when refresh body is invalid", async () => {
+    await supertest.post("/auth/refresh")
+      .set("x-api-key", process.env.APP_KEY)
+      .send({token: ""})
+      .expect(StatusCodes.UNPROCESSABLE_ENTITY);
+  });
+
+  test("should respond with 404 when refresh token not found", async () => {
+    await supertest.post("/auth/refresh")
+      .set("x-api-key", process.env.APP_KEY)
+      .send({token: "123456"})
+      .expect(StatusCodes.NOT_FOUND);
+  });
+
+
+  test("should respond with 406 when refresh token is expired", async () => {
+    const refreshToken = "abcdef";
+    const user = await userRepository.findOne("user");
+
+    await tokenRepository.insert({
+      token: refreshToken,
+      user: user,
+      createdAt: DateTime.now().minus({hours: 1}).toJSDate(),
+    });
+
+    await supertest.post("/auth/refresh")
+      .set("x-api-key", process.env.APP_KEY)
+      .send({token: refreshToken})
+      .expect(StatusCodes.NOT_ACCEPTABLE);
+  });
+
+
+  test("should respond with 200 when new token has been created", async () => {
+    const refreshToken = "abcdef";
+    const user = await userRepository.findOne("user");
+
+    await tokenRepository.insert({
+      token: refreshToken,
+      user: user,
+    });
+
+    await supertest.post("/auth/refresh")
+      .set("x-api-key", process.env.APP_KEY)
+      .send({token: refreshToken})
+      .expect(StatusCodes.OK);
   });
 
 });

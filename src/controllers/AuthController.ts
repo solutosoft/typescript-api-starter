@@ -1,27 +1,34 @@
-import { Authorized, Body, CurrentUser, Get, JsonController, NotAcceptableError, NotFoundError, Post, QueryParam } from "routing-controllers";
-import { getCustomRepository, getRepository } from "typeorm";
+import { Authorized, Body, Get, JsonController, NotAcceptableError, NotFoundError, Post, QueryParam } from "routing-controllers";
+import { getCustomRepository, getRepository, Repository } from "typeorm";
 import { validate } from "class-validator";
 import { ValidationError } from "../errors/ValidationError";
 import { comparePassword, generateHash, randomInt, randomString } from "../utils/hash";
-import { ResetPassword, Credentials, SignUp } from "../interface";
 import { User } from "../entities/User";
 import { DateTime } from "luxon";
 import { UserRepository } from "../repositories/UserRepository";
 import { createJwt } from "../utils/jwt";
 import { createEmail } from "../utils/email";
+import { Credentials } from "../types/Credentials";
+import { SignUp } from "../types/SignUp";
+import { ResetPassword } from "../types/ResetPassword";
+import { AuthToken } from "../types/AuthToken";
+import { Token } from "../entities/Token";
+import { RefreshToken } from "../types/RefreshToken";
 import buildUrl from "build-url";
 
 @JsonController("/auth")
 export class AuthController {
 
   private userRepository: UserRepository;
+  private tokenRepository: Repository<Token>;
 
   constructor () {
     this.userRepository = getCustomRepository(UserRepository);
+    this.tokenRepository = getRepository(Token);
   }
 
   @Post("/")
-  async signin(@Body({required: true}) data: Credentials): Promise<any> {
+  async signin(@Body({required: true}) data: Credentials): Promise<AuthToken> {
     const errors = await validate(data);
     if (errors.length ) {
       throw new ValidationError(errors);
@@ -37,11 +44,7 @@ export class AuthController {
       throw new NotAcceptableError("InvalidUsernameAndPassword");
     }
 
-    return createJwt({
-      id: user.id,
-      name: user.name,
-      username: user.username,
-    });
+    return this.createToken(user);
   }
 
   @Authorized()
@@ -155,7 +158,7 @@ export class AuthController {
   @Authorized()
   @Post("/reset")
   async reset(
-    @Body({required: true}) data: ResetPassword
+    @Body({required: true}) data: ResetPassword,
   ): Promise<string> {
 
     const errors = await validate(data);
@@ -178,6 +181,53 @@ export class AuthController {
     this.userRepository.save(user);
 
     return user.username;
+  }
+
+  @Authorized()
+  @Post("/refresh")
+  async refresh(
+    @Body({required: true}) data: RefreshToken,
+  ): Promise<AuthToken> {
+
+    const errors = await validate(data);
+    if (errors.length) {
+      throw new ValidationError(errors);
+    }
+
+    const token = await this.tokenRepository.findOne({token: data.token}, {
+      relations: ["user"],
+    });
+
+    if (!token) {
+      throw new NotFoundError("RefreshTokenNotFound");
+    }
+
+    const createdAt = DateTime.fromJSDate(token.createdAt);
+    const diff = DateTime.now().diff(createdAt).shiftTo("minutes");
+    if (diff.minutes > parseInt(process.env.JWT_EXPIRATION)) {
+      throw new NotAcceptableError("RefreshTokenExpired");
+    }
+
+    return this.createToken(token.user);
+  }
+
+  private async createToken(user: User): Promise<AuthToken> {
+    const refreshToken = randomString(64);
+    const accessToken = createJwt({
+      id: user.id,
+      name: user.name,
+      username: user.username,
+    });
+
+    this.tokenRepository.insert({
+      token: refreshToken,
+      user: user,
+    });
+
+    return {
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    };
   }
 
   private async findUser(username: string, trhowException?: boolean): Promise<User> {

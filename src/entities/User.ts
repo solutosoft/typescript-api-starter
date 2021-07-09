@@ -4,8 +4,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
+  OneToMany,
 } from "typeorm";
 import { Exclude } from "class-transformer";
+import { Token } from "./Token";
 
 @Entity("users")
 export class User {
@@ -59,4 +61,7 @@ export class User {
   @Exclude()
   @UpdateDateColumn()
   updatedAt?: Date;
+
+  @OneToMany(() => Token, token => token.user)
+  tokens: Token[];
 }

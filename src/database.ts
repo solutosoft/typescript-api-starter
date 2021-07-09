@@ -1,6 +1,8 @@
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { Token } from "./entities/Token";
 import { User } from "./entities/User";
 import { CreateUsers1605124277469 } from "./migrations/1605124277469-CreateUsers";
+import { CreateTokens1625855540929 } from "./migrations/1625855540929-CreateTokens";
 
 export function getDatabaseOptions() : any {
   return {
@@ -14,9 +16,11 @@ export function getDatabaseOptions() : any {
     namingStrategy: new SnakeNamingStrategy(),
     entities: [
       User,
+      Token,
     ],
     migrations: [
       CreateUsers1605124277469,
+      CreateTokens1625855540929,
     ],
     factories: [
       "tests/factories/**/*{.ts,.js}",
