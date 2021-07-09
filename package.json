@@ -2,6 +2,24 @@
   "name": "typescript-api-starter",
   "bin": "lib/cli.js",
   "main": "lib/index.js",
+  "description": "RESTful API template with Typescript, TypeORM, ExpressJs",
+  "readmeFilename": "README.md",
+  "keywords": [
+    "express",
+    "jwt",
+    "node",
+    "routing-controllers",
+    "starter",
+    "template",
+    "boilerplate",
+    "typeorm",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Leandro Guindani Gehlen",
+    "email": "leandrogehlen@gmail.com"
+  },
   "files": [
     "lib"
   ],
