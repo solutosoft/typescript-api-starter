@@ -3,7 +3,9 @@ import { getCustomRepository } from "typeorm";
 import { runSeeder, tearDownDatabase } from "typeorm-seeding";
 import { createSupertest, setupDatabase } from "../helpers";
 import { UserRepository } from "../../src/repositories/UserRepository";
+import jwtDecode, { JwtPayload } from "jwt-decode";
 import CreateUsers from "../seeds/CreateUsers";
+
 
 describe("Authentication", () => {
 
@@ -257,8 +259,11 @@ describe("Authentication", () => {
       })
       .expect(StatusCodes.OK);
 
-    expect(response.body).toEqual(expect.objectContaining({
-      apiKey: "userApiKey",
+    const result = jwtDecode<JwtPayload>(response.body);
+
+    expect(result).toEqual(expect.objectContaining({
+      name: "User",
+      username: "user@test.com",
     }));
   });
 

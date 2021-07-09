@@ -1,6 +1,6 @@
 import {MigrationInterface, QueryRunner, Table, TableIndex} from "typeorm";
 import { User } from "../entities/User";
-import { generateHash } from "../global";
+import { generateHash } from "../utils/hash";
 
 export class CreateUsers1605124277469 implements MigrationInterface {
 

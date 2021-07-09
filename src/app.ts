@@ -1,15 +1,44 @@
 // eslint-disable-next-line import/no-unassigned-import
 import "reflect-metadata";
-import { Action, createExpressServer, useContainer } from "routing-controllers";
+import { Action, createExpressServer, UnauthorizedError, useContainer } from "routing-controllers";
 import { getCustomRepository } from "typeorm";
 import { AuthController } from "./controllers/AuthController";
-import { isProduction, loadEnv } from "./global";
+import { isProduction, loadEnv } from "./utils/global";
 import { CompressionMiddleware } from "./middlewares/CompressionMiddleware";
 import { DatabaseMiddleware } from "./middlewares/DatabaseMiddleware";
 import { SecurityHstsMiddleware } from "./middlewares/SecurityHstsMiddleware";
 import { SecurityMiddleware } from "./middlewares/SecurityMiddleware";
 import { SecurityNoCacheMiddleware } from "./middlewares/SecurityNoCacheMiddleware";
 import { UserRepository } from "./repositories/UserRepository";
+import { checkJwt, createJwt } from "./utils/jwt";
+import { User } from "./entities/User";
+
+async function findUser(action: Action): Promise<User | false> {
+  const request = action.request;
+  const response = action.response;
+
+  const authorization = request.headers["authorization"];
+  const apiKey = request.query.key || request.headers["x-api-key"];
+
+  const repository = getCustomRepository(UserRepository);
+
+  if (authorization) {
+    try {
+      const payload = checkJwt(authorization);
+      const token = createJwt(payload);
+      response.setHeader("token", `Bearer ${token}`);
+      return await repository.findOne({ username: payload.username });
+    } catch  {
+      return false;
+    }
+  }
+
+  if (apiKey) {
+    return await repository.findOneByApiKey(apiKey);
+  }
+
+  return false;
+}
 
 export function createApp() {
   loadEnv();
@@ -37,27 +66,11 @@ export function createApp() {
       SecurityNoCacheMiddleware,
     ],
     currentUserChecker: async (action: Action) => {
-      const request = action.request;
-      const repository = getCustomRepository(UserRepository);
-      const apiKey = request.query.key || request.headers["x-api-key"];
-
-      if (apiKey) {
-        return await repository.findOneByApiKey(apiKey);
-      }
-
-      return false;
+      return await findUser(action);
     },
     authorizationChecker: async (action: Action, roles: string[]) => {
-      const request = action.request;
-      const apiKey = request.query.key || request.headers["x-api-key"];
-      const repository = getCustomRepository(UserRepository);
-
-      if (apiKey) {
-        const user = await repository.findOneByApiKey(apiKey);
-        return user && !roles.length;
-      }
-
-      return false;
+      const user = await findUser(action);
+      return user && !roles.length;
     },
   });
 }

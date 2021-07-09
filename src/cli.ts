@@ -1,5 +1,5 @@
 import { program } from "@caporal/core";
-import { loadEnv } from "./global";
+import { loadEnv } from "./utils/global";
 import { migrate } from "./commands/migrate";
 
 loadEnv();

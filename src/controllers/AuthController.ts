@@ -1,13 +1,14 @@
-import { Authorized, Body, Get, JsonController, NotAcceptableError, NotFoundError, Post, QueryParam } from "routing-controllers";
-import { getCustomRepository, getManager, getRepository } from "typeorm";
+import { Authorized, Body, CurrentUser, Get, JsonController, NotAcceptableError, NotFoundError, Post, QueryParam } from "routing-controllers";
+import { getCustomRepository, getRepository } from "typeorm";
 import { validate } from "class-validator";
 import { ValidationError } from "../errors/ValidationError";
-import { comparePassword, createEmail, generateHash, randomInt, randomString } from "../global";
+import { comparePassword, generateHash, randomInt, randomString } from "../utils/hash";
 import { ResetPassword, Credentials, SignUp } from "../interface";
 import { User } from "../entities/User";
 import { DateTime } from "luxon";
 import { UserRepository } from "../repositories/UserRepository";
-import { classToPlain } from "class-transformer";
+import { createJwt } from "../utils/jwt";
+import { createEmail } from "../utils/email";
 import buildUrl from "build-url";
 
 @JsonController("/auth")
@@ -36,7 +37,11 @@ export class AuthController {
       throw new NotAcceptableError("InvalidUsernameAndPassword");
     }
 
-    return classToPlain(user);
+    return createJwt({
+      id: user.id,
+      name: user.name,
+      username: user.username,
+    });
   }
 
   @Authorized()
@@ -176,8 +181,7 @@ export class AuthController {
   }
 
   private async findUser(username: string, trhowException?: boolean): Promise<User> {
-    const repository = getCustomRepository(UserRepository);
-    const user = await repository.findOneByUsername(username);
+    const user = await this.userRepository.findOneByUsername(username);
 
     if (!user && trhowException) {
       throw new NotFoundError("UserNotFound");

@@ -1,5 +1,5 @@
 import { getConnectionManager } from "typeorm";
-import { loadEnv } from "../../src/global";
+import { loadEnv } from "../../src/utils/global";
 import { DatabaseMiddleware } from "../../src/middlewares/DatabaseMiddleware";
 
 describe("Connection Middleware", () => {
