@@ -295,7 +295,7 @@ describe("Authentication", () => {
     await tokenRepository.insert({
       token: refreshToken,
       user: user,
-      createdAt: DateTime.now().minus({hours: 1}).toJSDate(),
+      createdAt: DateTime.now().minus({hours: 6}).toJSDate(),
     });
 
     await supertest.post("/auth/refresh")

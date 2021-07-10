@@ -22,7 +22,3 @@ export function loadEnv() {
   console.log("\nEnvironment configurations:", file);
   config({path: file});
 }
-
-
-
-
