@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export function createJwt(payload: object): string {
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: `${process.env.JWT_EXPIRATION}m`,
+    expiresIn: `${process.env.JWT_EXPIRATION_ACCESS}m`,
   });
 }
 
