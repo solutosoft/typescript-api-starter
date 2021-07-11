@@ -1,9 +1,8 @@
 {
   "name": "typescript-api-starter",
-  "bin": "lib/cli.js",
-  "main": "lib/index.js",
   "description": "RESTful API template with Typescript, TypeORM, ExpressJs",
   "readmeFilename": "README.md",
+  "license": "MIT",
   "keywords": [
     "express",
     "jwt",
@@ -15,11 +14,19 @@
     "typeorm",
     "typescript"
   ],
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/solutosoft/typescript-api-starter"
+  },
+  "bugs": {
+    "url": "https://github.com/solutosoft/typescript-api-starter/issues"
+  },
   "author": {
     "name": "Leandro Guindani Gehlen",
     "email": "leandrogehlen@gmail.com"
   },
+  "bin": "lib/cli.js",
+  "main": "lib/index.js",
   "files": [
     "lib"
   ],
@@ -85,9 +92,7 @@
     "jest": "^26.6.3",
     "jwt-decode": "^3.1.2",
     "supertest": "^6.1.2",
-    "terser-webpack-plugin": "^5.0.3",
     "ts-jest": "^26.4.4",
-    "ts-loader": "^8.0.14",
     "ts-node": "^9.1.1",
     "typescript": "^3.8.0"
   },
