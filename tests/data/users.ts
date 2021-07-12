@@ -18,7 +18,7 @@ export default [
     password: "$2b$12$1BuBIeHYkFu3uQYhhJcjpO26pQ8eSRt09uq.GIODQnnZFFN1H1rfG",
     apiKey: "expiredConfirmationApiKey",
     confirmationToken: "expiredConfirmationToken",
-    confirmationSentAt: DateTime.now().minus({hours: 6}).toJSDate(),
+    confirmationSentAt: DateTime.now().minus({hours: 25}).toJSDate(),
   },{
     id: "expired-reset-user",
     name: "Expired Reset User",
@@ -26,7 +26,7 @@ export default [
     password: "$2b$12$1BuBIeHYkFu3uQYhhJcjpO26pQ8eSRt09uq.GIODQnnZFFN1H1rfG",
     apiKey: "expiredResetApiKey",
     resetToken: "expiredResetToken",
-    resetSentAt: DateTime.now().minus({hours: 25}).toJSDate(),
+    resetSentAt: DateTime.now().minus({hours: 7}).toJSDate(),
   },{
     id: "not-confirmed-user",
     name: "Not Confirmed User",

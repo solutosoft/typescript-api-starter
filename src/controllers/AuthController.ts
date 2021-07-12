@@ -104,7 +104,7 @@ export class AuthController {
 
     const confirmationSentAt = DateTime.fromJSDate(user.confirmationSentAt);
     const diff = DateTime.now().diff(confirmationSentAt).shiftTo("hours");
-    if (diff.hours > 3) {
+    if (diff.hours > parseInt(process.env.AUTH_EXPIRATION_CONFIRMATION)) {
       throw new NotAcceptableError("expiredConfirmationToken");
     }
 
@@ -173,7 +173,7 @@ export class AuthController {
 
     const resetSentAt = DateTime.fromJSDate(user.resetSentAt);
     const diff = DateTime.now().diff(resetSentAt).shiftTo("hours");
-    if (diff.hours > 24) {
+    if (diff.hours > parseInt(process.env.AUTH_EXPIRATION_RESET)) {
       throw new NotAcceptableError("TokenExpired");
     }
 
