@@ -80,9 +80,10 @@ export class AuthController {
     user.username = data.username;
     user.password = await generateHash(data.password);
     user.apiKey = randomString();
-    this.userRepository.save(user);
 
+    await this.userRepository.save(user);
     await this.sendConfirmation(user);
+
     return null;
   }
 
