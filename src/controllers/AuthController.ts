@@ -204,12 +204,15 @@ export class AuthController {
     }
 
     const createdAt = DateTime.fromJSDate(token.createdAt);
-    const diff = DateTime.now().diff(createdAt).shiftTo("minutes");
-    if (diff.minutes > parseInt(process.env.JWT_EXPIRATION_REFRESH)) {
+    const diff = DateTime.now().diff(createdAt).shiftTo("hours");
+    const isExpired = diff.hours > parseInt(process.env.JWT_EXPIRATION_REFRESH);
+
+    await this.tokenRepository.remove(token);
+
+    if (isExpired) {
       throw new NotAcceptableError("RefreshTokenExpired");
     }
 
-    await this.tokenRepository.remove(token);
     return this.createToken(token.user);
   }
 
