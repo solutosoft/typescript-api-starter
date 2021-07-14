@@ -224,7 +224,7 @@ export class AuthController {
       username: user.username,
     });
 
-    this.tokenRepository.insert({
+    await this.tokenRepository.insert({
       token: refreshToken,
       user: user,
     });
