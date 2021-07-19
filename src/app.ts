@@ -12,6 +12,7 @@ import { SecurityNoCacheMiddleware } from "./middlewares/SecurityNoCacheMiddlewa
 import { UserRepository } from "./repositories/UserRepository";
 import { checkJwt, createJwt } from "./utils/jwt";
 import { User } from "./entities/User";
+import omit from "lodash.omit";
 
 async function findUser(action: Action): Promise<User | false> {
   const request = action.request;
@@ -19,16 +20,20 @@ async function findUser(action: Action): Promise<User | false> {
 
   const authorization = request.headers["authorization"];
   const apiKey = request.query.key || request.headers["x-api-key"];
-
   const repository = getCustomRepository(UserRepository);
 
   if (authorization) {
     try {
       const payload = checkJwt(authorization);
-      const token = createJwt(payload);
-      response.setHeader("token", `Bearer ${token}`);
-      return await repository.findOne({ username: payload.username });
-    } catch  {
+      const user = await repository.findOne({ username: payload.username });
+
+      if (user) {
+        const token = createJwt(omit(payload, ["exp", "iat"]));
+        response.setHeader("token", `Bearer ${token}`);
+      }
+
+      return user;
+    } catch {
       return false;
     }
   }

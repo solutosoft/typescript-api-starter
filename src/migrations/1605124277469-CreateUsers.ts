@@ -75,6 +75,7 @@ export class CreateUsers1605124277469 implements MigrationInterface {
     await queryRunner.createIndex("users", new TableIndex({
       name: "ix_users_username",
       columnNames: ["username"],
+      isUnique: true,
     }));
 
     const admin = await this.createUser({
