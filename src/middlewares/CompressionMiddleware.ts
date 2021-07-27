@@ -1,5 +1,5 @@
 import compression from "compression";
-import { ExpressMiddlewareInterface, Middleware } from 'routing-controllers';
+import { ExpressMiddlewareInterface, Middleware } from "routing-controllers";
 
 @Middleware({ type: "before" })
 export class CompressionMiddleware implements ExpressMiddlewareInterface {

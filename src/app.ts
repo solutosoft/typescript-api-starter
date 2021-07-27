@@ -6,6 +6,7 @@ import { AuthController } from "./controllers/AuthController";
 import { isProduction, loadEnv } from "./utils/global";
 import { CompressionMiddleware } from "./middlewares/CompressionMiddleware";
 import { DatabaseMiddleware } from "./middlewares/DatabaseMiddleware";
+import { RateLimitMiddleware } from "./middlewares/RateLimitMiddleware";
 import { SecurityHstsMiddleware } from "./middlewares/SecurityHstsMiddleware";
 import { SecurityMiddleware } from "./middlewares/SecurityMiddleware";
 import { SecurityNoCacheMiddleware } from "./middlewares/SecurityNoCacheMiddleware";
@@ -69,6 +70,7 @@ export function createApp() {
       SecurityHstsMiddleware,
       SecurityMiddleware,
       SecurityNoCacheMiddleware,
+      RateLimitMiddleware,
     ],
     currentUserChecker: async (action: Action) => {
       return await findUser(action);
