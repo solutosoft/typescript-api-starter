@@ -54,7 +54,7 @@
     "gulp-typescript": "^6.0.0-alpha.1",
     "helmet": "^4.6.0",
     "http-status-codes": "^2.1.4",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash.omit": "^4.5.0",
     "luxon": "^1.28.0",
     "mysql": "^2.18.1",
