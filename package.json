@@ -56,7 +56,7 @@
     "http-status-codes": "^2.1.4",
     "jsonwebtoken": "^9.0.0",
     "lodash.omit": "^4.5.0",
-    "luxon": "^1.28.0",
+    "luxon": "^2.5.2",
     "mysql": "^2.18.1",
     "nocache": "^3.0.1",
     "nodemailer": "^6.7.1",
