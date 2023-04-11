@@ -64,7 +64,7 @@
     "rand-token": "^1.0.1",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.9.0",
-    "typeorm": "^0.2.41",
+    "typeorm": "^0.3.14",
     "typeorm-naming-strategies": "^2.0.0",
     "typeorm-seeding": "^1.6.1"
   },
